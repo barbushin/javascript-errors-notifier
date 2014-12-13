@@ -1,28 +1,42 @@
 {
-   "background": {
-      "scripts": [ "background.js" ]
-   },
-   "content_scripts": [ {
-      "all_frames": true,
-      "js": [ "content.js" ],
-      "matches": [ "http://*/*", "https://*/*", "file://*/*" ],
-      "run_at": "document_start"
-   } ],
-   "description": "Notifies JavaScript errors by icon in address bar or notification popup(optional).",
-   "icons": {
-      "128": "img/logo_128.png",
-      "16": "img/logo_16.png",
-      "48": "img/logo_48.png"
-   },
-   "incognito": "spanning",
-   "manifest_version": 2,
-   "name": "JavaScript Errors Notifier",
-   "page_action": {
-      "default_icon": "img/logo_16.png",
-      "default_popup": "popup.html",
-      "default_title": "There are JavaScript errors on this page. Click to see details."
-   },
-   "permissions": [ "*://*/*", "tabs", "notifications", "storage" ],
-   "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "2.1.5"
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "content_scripts": [
+        {
+            "all_frames": true,
+            "js": ["content.js"],
+            "matches": [
+                "http://*/*",
+                "https://*/*",
+                "file://*/*"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    "description": "Notifies JavaScript errors by icon in address bar or notification popup(optional).",
+    "icons": {
+        "128": "img/logo_128.png",
+        "16": "img/error_16.png",
+        "48": "img/logo_48.png"
+    },
+    "incognito": "spanning",
+    "manifest_version": 2,
+    "name": "JavaScript Errors Notifier",
+    "page_action": {
+        "default_icon": {
+            "19": "img/error_19.png",
+            "38": "img/error_38.png"
+        },
+        "default_popup": "popup.html",
+        "default_title": "There are JavaScript errors on this page. Click to see details."
+    },
+    "permissions": [
+        "*://*/*",
+        "tabs",
+        "notifications",
+        "storage"
+    ],
+    "update_url": "https://clients2.google.com/service/update2/crx",
+    "version": "2.1.5"
 }

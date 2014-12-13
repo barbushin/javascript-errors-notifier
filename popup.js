@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		})(option);
 	}
 	document.getElementById('optionsLink').onclick = function() {
-		this.parentNode.remove();
+		this.parentNode.parentNode.remove();
 		document.getElementById('optionsBlock').style.display = 'block';
 	};
 
@@ -52,12 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			document.getElementById(linksIds[i]).onclick = function() {
 				localStorage['isRecommended'] = 3;
 				window.close();
-				if(this.id == 'openRecommendation') {
-					return true;
-				}
-				else {
-					return false;
-				}
+				return this.id == 'openRecommendation';
 			};
 		}
 	}
