@@ -1,0 +1,55 @@
+<script type="text/javascript" src="popup.js"></script>
+<style>
+	pre {
+		white-space: nowrap;
+		width: 100%;
+		padding: 2px;
+		margin: 0;
+	}
+
+	#errors {
+		color: red;
+	}
+
+	a {
+		color: red;
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: underline;
+	}
+
+	.options {
+		margin-top: 15px;
+		color: dimgrey;
+		font-size: 0.9em;
+		display: none;
+	}
+
+</style>
+<pre><span id="errors"></span>
+
+<div class="options" id="optionsBlock">
+
+	<input type="checkbox" id="traceCheckbox" />
+	Show errors stack trace<br />
+
+	<input type="checkbox" id="columnCheckbox" />
+	Show errors column number<br />
+
+	<input type="checkbox" id="notifyCheckbox" />
+	<span id="notificationOptionText"></span>
+
+	<div id="recommendation" style="margin-top: 10px">
+		* If you like this extension, could you please leave some feedback? <strong><a style="color: green" href="http://goo.gl/rIjsXk" target="_blank" id="openRecommendation">Yes</a> / <a style="color: red" href="#" id="hideRecommendation">No</a></strong>
+	</div>
+
+</div>
+
+	<div style="display:block; margin-top: 10px;">
+		<a href="#" style="color: dimgrey; position:relative;float:right" id="optionsLink">Options</a>
+		<a href="#" id="clearLink" style="color: dimgrey;">Clear</a>
+	</div>
+
+</pre>
