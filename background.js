@@ -118,7 +118,7 @@
 	}
 
 	self.showNotification = function(message, noClearPrevious) {
-		self.showNotifications([ message ], noClearPrevious);
+		self.showNotifications([message], noClearPrevious);
 	};
 
 	function clearNotifications() {
@@ -225,9 +225,9 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 		}
 
 		var sourceLink = error.url ? ('<br/>'
-			+ (error.stack ? '#' + (lines.length + 1) + ' ' : '')
-			+ '<a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>'
-			) : '';
+		+ (error.stack ? '#' + (lines.length + 1) + ' ' : '')
+		+ '<a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>'
+		) : '';
 
 		errorsHtml.push(htmlentities(error.text) + sourceLink + (error.stack ? '<br/>' + formatStackForPopup(error.stack) : ''));
 	}

@@ -18,6 +18,12 @@ Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javas
 * Ignores repeated errors
 * Ignores Google Chrome extensions internal errors
 
+## Contribution
+
+* Check [Issues](https://github.com/barbushin/javascript-errors-notifier/issues) page for feature requests.
+* Please keep original code style: use `tab` for indention, and all other spacing & braces formatting like in original.
+* Test your code twice :) Thank you!
+
 ## Recommended
 
-Google Chrome extension [PHP Console](http://php-console.com)
+Google Chrome extension [PHP Console](https://chrome.google.com/webstore/detail/php-console/nfhmhhlpfleoednkpnnnkolmclajemef)

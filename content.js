@@ -31,7 +31,8 @@ new function() {
 						line: e.lineno,
 						col: e.colno,
 						text: e.message
-					}}));
+					}
+				}));
 			}
 		});
 	}
