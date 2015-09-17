@@ -229,7 +229,7 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 		+ '<a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>'
 		) : '';
 
-		var errorLink = '<a target="_blank" href="http://www.google.com.br/webhp?ie=UTF-8#q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>';
+		var errorLink = '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>';
 
 		errorsHtml.push(errorLink + sourceLink + (error.stack ? '<br/>' + formatStackForPopup(error.stack) : ''));
 	}

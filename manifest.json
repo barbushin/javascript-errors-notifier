@@ -1,7 +1,7 @@
 {
 	"name": "JavaScript Errors Notifier",
 	"description": "Notifies JavaScript errors by icon in address bar or notification popup(optional).",
-	"version": "2.2.8",
+	"version": "2.1.23",
 	"manifest_version": 2,
 	"background": {
 		"scripts": ["background.js"]
