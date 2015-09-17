@@ -17,6 +17,7 @@ Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javas
 * Does not overrides user-defined error handler
 * Ignores repeated errors
 * Ignores Google Chrome extensions internal errors
+* Google Search's link on StackOverflow
 
 ## Contribution
 
