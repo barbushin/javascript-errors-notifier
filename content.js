@@ -22,6 +22,39 @@ new function() {
 	});
 
 	function codeToInject() {
+
+		function handleUserError(text) {
+			var e = new Error();
+			var stack = e.stack.split("\n");
+			var callSrc = /^.*?\((.*?):(\d+):(\d+)/.exec(stack[3]);
+			delete stack[1];
+			delete stack[2];
+			document.dispatchEvent(new CustomEvent('ErrorToExtension', {
+				detail: {
+					stack: stack.join("\n"),
+					url: callSrc[1],
+					line: callSrc[2],
+					col: callSrc[3],
+					text: text
+				}
+			}));
+		}
+
+		// handle console.error()
+		var consoleErrorFunc = window.console.error;
+		window.console.error = function(text) {
+			consoleErrorFunc.call(console, text);
+			handleUserError(text);
+		};
+
+		// handle console.warn()
+		var consoleWarnFunc = window.console.warn;
+		window.console.warn = function(text) {
+			consoleWarnFunc.call(console, text);
+			handleUserError(text);
+		};
+
+		// handle uncaught errors
 		window.addEventListener('error', function(e) {
 			if(e.filename) {
 				document.dispatchEvent(new CustomEvent('ErrorToExtension', {
