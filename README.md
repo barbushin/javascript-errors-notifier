@@ -15,6 +15,7 @@ Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javas
 * Show errors column number(optional)
 * Error source in notification popups is clickable
 * Does not overrides user-defined error handler
+* Handle console.error() calls
 * Ignores repeated errors
 * Ignores Google Chrome extensions internal errors
 * Google Search's link on StackOverflow
