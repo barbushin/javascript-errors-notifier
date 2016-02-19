@@ -47,12 +47,12 @@ new function() {
 			handleUserError(text);
 		};
 
-		// handle console.warn()
-		var consoleWarnFunc = window.console.warn;
-		window.console.warn = function(text) {
-			consoleWarnFunc.call(console, text);
-			handleUserError(text);
-		};
+		// handle console.warn() - disabled for a while, until there will be config option to handle it correctly
+		//var consoleWarnFunc = window.console.warn;
+		//window.console.warn = function(text) {
+		//	consoleWarnFunc.call(console, text);
+		//	handleUserError(text);
+		//};
 
 		// handle uncaught errors
 		window.addEventListener('error', function(e) {
