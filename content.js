@@ -26,7 +26,7 @@ new function() {
 		function handleUserError(text) {
 			var e = new Error();
 			var stack = e.stack.split("\n");
-			var callSrc = /^.*?\((.*?):(\d+):(\d+)/.exec(stack[3]) || /(\w+:\/\/.*?):(\d+):(\d+)/.exec(stack[3]) || [null, null, null, null];
+			var callSrc = (stack.length > 3 && (/^.*?\((.*?):(\d+):(\d+)/.exec(stack[3]) || /(\w+:\/\/.*?):(\d+):(\d+)/.exec(stack[3]))) || [null, null, null, null];
 			delete stack[1];
 			delete stack[2];
 			document.dispatchEvent(new CustomEvent('ErrorToExtension', {
