@@ -14,6 +14,35 @@ function formatStackForPopup(stack) {
 	return lines.join('<br/>');
 }
 
+// Ignore net::ERR_BLOCKED_BY_CLIENT initiated by AdPlus & etc
+var ignoredUrls = {};
+var ignoredUrlsBufferLimit = 5;
+
+function is404UrlIgnoredInOptions(url) {
+	var ext = url.split('.').pop().split(/\#|\?/)[0].toLowerCase();
+	if(ext == 'js') {
+		return localStorage['ignore404js'];
+	}
+	if(ext == 'css') {
+		return localStorage['ignore404css'];
+	}
+	return localStorage['ignore404others'];
+}
+
+chrome.webRequest.onErrorOccurred.addListener(function(e) {
+	if(e.error == 'net::ERR_BLOCKED_BY_CLIENT') {
+		var url = e.url;
+		if(!is404UrlIgnoredInOptions(url)) {
+			if(ignoredUrls[url]) {
+				delete ignoredUrls[url];
+			}
+			ignoredUrls[url] = true;
+			ignoredUrlsBufferLimit ? ignoredUrlsBufferLimit-- : delete ignoredUrls[Object.keys(ignoredUrls)[0]];
+		}
+	}
+}, {urls: ["<all_urls>"]});
+
+
 chrome.extension.onRequest.addListener(function(request, sender) {
 	var errorsHtml = [];
 	var stackLineRegExp = new RegExp('^(.*?)\\(?(https?://.*?)(\\)|$)');
@@ -21,39 +50,54 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 	for(var i in request.errors) {
 		var error = request.errors[i];
 
-		error.text = error.text.replace(/^Uncaught /g, '');
-		var m = new RegExp('^(\\w+):\s*(.+)').exec(error.text);
-		error.type = m ? m[1] : 'Uncaught Error';
-
-		if(localStorage['showColumn']) {
-			error.line = error.line + ':' + error.col;
-		}
-
-		if(error.stack && localStorage['showTrace']) {
-			var lines = error.stack.replace(/\n\s*at\s+/g, '\n').split('\n');
-			lines.shift();
-			for(var ii in lines) {
-				var m = stackLineRegExp.exec(lines[ii]);
-				lines[ii] = {
-					num: lines.length - ii,
-					url: m ? m[2] : lines[ii],
-					method: (m && m[1].trim() ? m[1].trim() + '()' : '')
-				};
+		if(error.is404) {
+			if(ignoredUrls[error.url] || is404UrlIgnoredInOptions(error.url)) {
+				delete request.errors[i];
+				continue;
 			}
-			error.stack = lines;
+			error.type = 'File not found';
+			error.text = error.url;
+			errorsHtml.unshift('File not found: ' + htmlentities(error.url));
 		}
 		else {
-			error.stack = null;
+			error.text = error.text.replace(/^Uncaught /g, '');
+			var m = new RegExp('^(\\w+):\s*(.+)').exec(error.text);
+			error.type = m ? m[1] : 'Uncaught Error';
+
+			if(localStorage['showColumn'] && error.line && error.col) {
+				error.line = error.line + ':' + error.col;
+			}
+
+			if(localStorage['showTrace'] && error.stack) {
+				var lines = error.stack.replace(/\n\s*at\s+/g, '\n').split('\n');
+				lines.shift();
+				for(var ii in lines) {
+					var m = stackLineRegExp.exec(lines[ii]);
+					lines[ii] = {
+						num: lines.length - ii,
+						url: m ? m[2] : lines[ii],
+						method: (m && m[1].trim() ? m[1].trim() + '()' : '')
+					};
+				}
+				error.stack = lines;
+			}
+			else {
+				error.stack = null;
+			}
+
+			var sourceLink = error.url ? ('<br/>'
+				+ (error.stack ? '#' + (lines.length + 1) + ' ' : '')
+				+ '<a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>'
+			) : '';
+
+			var errorLink = '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>';
+
+			errorsHtml.push(errorLink + sourceLink + (error.stack ? '<br/>' + formatStackForPopup(error.stack) : ''));
 		}
+	}
 
-		var sourceLink = error.url ? ('<br/>'
-		+ (error.stack ? '#' + (lines.length + 1) + ' ' : '')
-		+ '<a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>'
-		) : '';
-
-		var errorLink = '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>';
-
-		errorsHtml.push(errorLink + sourceLink + (error.stack ? '<br/>' + formatStackForPopup(error.stack) : ''));
+	if(!errorsHtml.length) {
+		return;
 	}
 
 	chrome.pageAction.setPopup({

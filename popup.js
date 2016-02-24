@@ -20,7 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	var options = {
 		columnCheckbox: 'showColumn',
 		traceCheckbox: 'showTrace',
-		notifyCheckbox: 'notify_' + request.host
+		notifyCheckbox: 'notify_' + request.host,
+		ignore404js : 'ignore404js',
+		ignore404css: 'ignore404css',
+		ignore404others: 'ignore404others'
 	};
 
 	for(var id in options) {

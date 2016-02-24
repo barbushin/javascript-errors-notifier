@@ -16,6 +16,8 @@ Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javas
 * Error source in notification popups is clickable
 * Does not overrides user-defined error handler
 * Handle console.error() calls
+* Handle missing js/css/other missing files 404 errors
+* Ignore 404 errors initiated by AdBlock and etc
 * Ignores repeated errors
 * Ignores Google Chrome extensions internal errors
 * Google Search's link on StackOverflow

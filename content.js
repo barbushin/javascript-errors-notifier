@@ -47,13 +47,6 @@ new function() {
 			handleUserError(text);
 		};
 
-		// handle console.warn() - disabled for a while, until there will be config option to handle it correctly
-		//var consoleWarnFunc = window.console.warn;
-		//window.console.warn = function(text) {
-		//	consoleWarnFunc.call(console, text);
-		//	handleUserError(text);
-		//};
-
 		// handle uncaught errors
 		window.addEventListener('error', function(e) {
 			if(e.filename) {
@@ -68,6 +61,20 @@ new function() {
 				}));
 			}
 		});
+
+		// handle 404 errors
+		window.addEventListener('error', function(e) {
+			var src = e.target.src || e.target.href;
+			var baseUrl = e.target.baseURI;
+			if(src && baseUrl && src != baseUrl) {
+				document.dispatchEvent(new CustomEvent('ErrorToExtension', {
+					detail: {
+						is404: true,
+						url: src
+					}
+				}));
+			}
+		}, true);
 	}
 
 	var script = document.createElement('script');

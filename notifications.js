@@ -20,18 +20,27 @@ var notificationsHandler = new function() {
 		var messages = [];
 		for(var i in errors) {
 			var error = errors[i];
-			var source = error['url'] + ' ' + error['line'];
-			messages.push({
-				'tabId': tabId,
-				'title': error['type'],
-				'text': error['text'].replace(/^\w+:\s*/, '') + (error.stack ? '\n' + formatStack(error.stack) : ''),
-				'buttons': [
-					{
-						'title': source.length <= 60 ? source : ('...' + source.substr(-57)),
-						'url': 'view-source:' + error.url
-					}
-				]
-			});
+			if(error['is404']) {
+				messages.unshift({
+					'tabId': tabId,
+					'title': error['type'],
+					'text': error['url']
+				});
+			}
+			else {
+				var source = error['url'] + ' ' + error['line'];
+				messages.push({
+					'tabId': tabId,
+					'title': error['type'],
+					'text': error['text'].replace(/^\w+:\s*/, '') + (error.stack ? '\n' + formatStack(error.stack) : ''),
+					'buttons': [
+						{
+							'title': source.length <= 60 ? source : ('...' + source.substr(-57)),
+							'url': 'view-source:' + error.url
+						}
+					]
+				});
+			}
 		}
 		self.showNotifications(messages);
 	};
