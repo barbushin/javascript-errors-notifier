@@ -18,7 +18,10 @@ function formatStackForPopup(stack) {
 var ignoredUrls = {};
 var ignoredUrlsBufferLimit = 100;
 
-function is404UrlIgnoredInOptions(url) {
+function is404UrlIgnored(url) {
+	if(!url.indexOf('chrome-extension://')) { // ignore Google Chrome extensions 404 errors
+		return true;
+	}
 	var ext = url.split('.').pop().split(/\#|\?/)[0].toLowerCase();
 	if(ext == 'js') {
 		return localStorage['ignore404js'];
@@ -32,7 +35,7 @@ function is404UrlIgnoredInOptions(url) {
 chrome.webRequest.onErrorOccurred.addListener(function(e) {
 	if(e.error == 'net::ERR_BLOCKED_BY_CLIENT') {
 		var url = e.url;
-		if(!is404UrlIgnoredInOptions(url)) {
+		if(!is404UrlIgnored(url)) {
 			if(ignoredUrls[url]) {
 				delete ignoredUrls[url];
 			}
@@ -51,7 +54,7 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 		var error = request.errors[i];
 
 		if(error.is404) {
-			if(ignoredUrls[error.url] || is404UrlIgnoredInOptions(error.url)) {
+			if(ignoredUrls[error.url] || is404UrlIgnored(error.url)) {
 				delete request.errors[i];
 				continue;
 			}
