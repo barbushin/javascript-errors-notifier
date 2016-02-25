@@ -16,7 +16,7 @@ function formatStackForPopup(stack) {
 
 // Ignore net::ERR_BLOCKED_BY_CLIENT initiated by AdPlus & etc
 var ignoredUrls = {};
-var ignoredUrlsBufferLimit = 5;
+var ignoredUrlsBufferLimit = 100;
 
 function is404UrlIgnoredInOptions(url) {
 	var ext = url.split('.').pop().split(/\#|\?/)[0].toLowerCase();
