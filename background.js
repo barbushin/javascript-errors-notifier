@@ -15,10 +15,10 @@ function formatStackForPopup(stack) {
 }
 
 // Ignore net::ERR_BLOCKED_BY_CLIENT initiated by AdPlus & etc
-var ignoredUrls = {};
-var ignoredUrlsBufferLimit = 100;
+var ignoredUrlsHashes = {};
+var ignoredUrlsSizeLimit = 100;
 
-function is404UrlIgnored(url) {
+function isUrlIgnoredByType(url) {
 	if(!url.indexOf('chrome-extension://')) { // ignore Google Chrome extensions 404 errors
 		return true;
 	}
@@ -32,15 +32,23 @@ function is404UrlIgnored(url) {
 	return localStorage['ignore404others'];
 }
 
+function getIgnoredUrlHash(url) {
+	return url.replace(/\d+/g, '');
+}
+
 chrome.webRequest.onErrorOccurred.addListener(function(e) {
 	if(e.error == 'net::ERR_BLOCKED_BY_CLIENT') {
-		var url = e.url;
-		if(!is404UrlIgnored(url)) {
-			if(ignoredUrls[url]) {
-				delete ignoredUrls[url];
+		var url = getIgnoredUrlHash(e.url);
+		if(!isUrlIgnoredByType(url)) {
+			if(ignoredUrlsHashes[url]) { // move url in the end of list
+				delete ignoredUrlsHashes[url];
 			}
-			ignoredUrls[url] = true;
-			ignoredUrlsBufferLimit ? ignoredUrlsBufferLimit-- : delete ignoredUrls[Object.keys(ignoredUrls)[0]];
+			ignoredUrlsHashes[url] = true;
+			var ignoredUrlsArray = Object.keys(ignoredUrlsHashes);
+			if(ignoredUrlsArray.length > ignoredUrlsSizeLimit) {
+				ignoredUrlsSizeLimit--;
+				delete ignoredUrlsHashes[ignoredUrlsArray[0]];
+			}
 		}
 	}
 }, {urls: ["<all_urls>"]});
@@ -54,7 +62,7 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 		var error = request.errors[i];
 
 		if(error.is404) {
-			if(ignoredUrls[error.url] || is404UrlIgnored(error.url)) {
+			if(ignoredUrlsHashes[getIgnoredUrlHash(error.url)] || isUrlIgnoredByType(error.url)) {
 				delete request.errors[i];
 				continue;
 			}
