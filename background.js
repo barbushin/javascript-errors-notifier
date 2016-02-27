@@ -16,7 +16,7 @@ function formatStackForPopup(stack) {
 
 // Ignore net::ERR_BLOCKED_BY_CLIENT initiated by AdPlus & etc
 var ignoredUrlsHashes = {};
-var ignoredUrlsSizeLimit = 100;
+var ignoredUrlsLimit = 100;
 
 function isUrlIgnoredByType(url) {
 	if(!url.indexOf('chrome-extension://')) { // ignore Google Chrome extensions 404 errors
@@ -45,8 +45,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(e) {
 			}
 			ignoredUrlsHashes[url] = true;
 			var ignoredUrlsArray = Object.keys(ignoredUrlsHashes);
-			if(ignoredUrlsArray.length > ignoredUrlsSizeLimit) {
-				ignoredUrlsSizeLimit--;
+			if(ignoredUrlsArray.length > ignoredUrlsLimit) {
 				delete ignoredUrlsHashes[ignoredUrlsArray[0]];
 			}
 		}
