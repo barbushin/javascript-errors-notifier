@@ -8,6 +8,14 @@ function parseQuery(query) {
 	return params;
 }
 
+function copyToClipboard(str) {
+	document.oncopy = function(event) {
+		event.clipboardData.setData('text/plain', str);
+		event.preventDefault();
+	};
+	document.execCommand('Copy', false, null);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	var request = parseQuery(window.location.search.substr(1));
 	document.getElementById('errors').innerHTML = request.errors;
@@ -46,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		})(option);
 	}
 	document.getElementById('optionsLink').onclick = function() {
-		this.parentNode.parentNode.remove();
+		this.parentNode.remove();
 		document.getElementById('optionsBlock').style.display = 'block';
 	};
 
@@ -56,6 +64,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			'_clear': true,
 			'tabId': request.tabId
 		});
+		window.close();
+	};
+
+	document.getElementById('copyLink').onclick = function() {
+		var isWindows = navigator.appVersion.indexOf('Windows') != -1;
+		copyToClipboard(request.errors.replace(/<br\/>/g,  isWindows ? '\r\n' : '\n').replace(/<.*?>/g, ''));
 		window.close();
 	};
 
