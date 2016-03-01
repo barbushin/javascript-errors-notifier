@@ -20,7 +20,8 @@ Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javas
 * Ignore 404 errors initiated by AdBlock and etc
 * Ignores repeated errors
 * Ignores Google Chrome extensions internal errors
-* Google Search's link on StackOverflow
+* Error text is linked on StackOverflow search
+* Copy errors details to clipboard
 
 ## Contribution
 
