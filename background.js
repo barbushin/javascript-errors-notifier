@@ -9,7 +9,7 @@ function formatStackForPopup(stack) {
 	var lines = [];
 	for(var i in stack) {
 		var call = stack[i];
-		lines.push('#' + call.num + ' ' + call.url + ' ' + call.method);
+		lines.push((stack.length > 1 ? '#' + call.num + ' ' : '') + '<a href="view-source:' + call.url + '" target="_blank">' + call.url + '</a> ' + call.method);
 	}
 	return lines.join('<br/>');
 }
@@ -70,6 +70,7 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 			errorsHtml.unshift('File not found: ' + htmlentities(error.url));
 		}
 		else {
+			var errorHtml = '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>';
 			error.text = error.text.replace(/^Uncaught /g, '');
 			var m = new RegExp('^(\\w+):\s*(.+)').exec(error.text);
 			error.type = m ? m[1] : 'Uncaught Error';
@@ -89,20 +90,12 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 						method: (m && m[1].trim() ? m[1].trim() + '()' : '')
 					};
 				}
-				error.stack = lines;
+				errorHtml += '<br/>' + formatStackForPopup(lines);
 			}
 			else {
-				error.stack = null;
+				errorHtml += '<br/><a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>';
 			}
-
-			var sourceLink = error.url ? ('<br/>'
-				+ (error.stack ? '#' + (lines.length + 1) + ' ' : '')
-				+ '<a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>'
-			) : '';
-
-			var errorLink = '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>';
-
-			errorsHtml.push(errorLink + sourceLink + (error.stack ? '<br/>' + formatStackForPopup(error.stack) : ''));
+			errorsHtml.push(errorHtml);
 		}
 	}
 
