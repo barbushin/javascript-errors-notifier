@@ -59,7 +59,9 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 
 	for(var i in request.errors) {
 		var error = request.errors[i];
-
+		if(localStorage['ignore404external'] && request.host != /:\/\/(.*?)(\/|$)/.exec(error.url)[1]) {
+			continue;
+		}
 		if(error.is404) {
 			if(ignoredUrlsHashes[getIgnoredUrlHash(error.url)] || isUrlIgnoredByType(error.url)) {
 				delete request.errors[i];

@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		notifyCheckbox: 'notify_' + request.host,
 		ignore404js : 'ignore404js',
 		ignore404css: 'ignore404css',
-		ignore404others: 'ignore404others'
+		ignore404others: 'ignore404others',
+		ignore404external: 'ignore404external'
 	};
 
 	for(var id in options) {
