@@ -1,5 +1,4 @@
-﻿
-function htmlentities(str) {
+﻿function htmlentities(str) {
 	var div = document.createElement('div');
 	div.appendChild(document.createTextNode(str));
 	return div.innerHTML;
@@ -51,7 +50,6 @@ chrome.webRequest.onErrorOccurred.addListener(function(e) {
 		}
 	}
 }, {urls: ["<all_urls>"]});
-
 
 chrome.extension.onRequest.addListener(function(request, sender) {
 	var errorsHtml = [];
@@ -105,6 +103,17 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 		return;
 	}
 
+	chrome.pageAction.setTitle({
+		tabId: sender.tab.id,
+		title: 'There are some errors on this page. Click to see details.'
+	});
+	chrome.pageAction.setIcon({
+		tabId: sender.tab.id,
+		path: {
+			"19": "img/error_19.png",
+			"38": "img/error_38.png"
+		}
+	});
 	chrome.pageAction.setPopup({
 		tabId: sender.tab.id,
 		popup: 'popup.html?errors=' + encodeURIComponent(errorsHtml.join('<br/><br/>')) + '&host=' + encodeURIComponent(request.host) + '&tabId=' + sender.tab.id
@@ -113,6 +122,10 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 
 	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		if(request['_tabId']) {
+			chrome.pageAction.setTitle({
+					tabId: sender.tab.id,
+					title: 'No errors on this page'
+				});
 			sendResponse({
 				'tabId': sender.tab.id
 			});

@@ -31,11 +31,10 @@
 	"incognito": "spanning",
 	"page_action": {
 		"default_icon": {
-			"19": "img/error_19.png",
-			"38": "img/error_38.png"
+			"19": "img/error_19_disabled.png",
+			"38": "img/error_38_disabled.png"
 		},
-		"default_popup": "popup.html",
-		"default_title": "There are JavaScript errors on this page. Click to see details."
+		"default_popup": "popup.html"
 	},
 	"permissions": [
 		"<all_urls>",
