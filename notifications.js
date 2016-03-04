@@ -6,16 +6,6 @@ var notificationsHandler = new function() {
 	var self = this;
 	var tabsNotifiesIds = {};
 
-	function formatStack(stack) {
-		var lines = [];
-		for(var i in stack) {
-			var call = stack[i];
-			var line = '#' + call.num + (call.method ? ' ' + call.method : '');
-			lines.push(line + ' ' + (line.length + call.url.length > 39 ? '...' + call.url.substr(-(36 - line.length)) : call.url));
-		}
-		return lines.join('\n');
-	}
-
 	this.showErrorsNotifications = function(errors, tabId) {
 		var messages = [];
 		for(var i in errors) {
@@ -32,7 +22,7 @@ var notificationsHandler = new function() {
 				messages.push({
 					'tabId': tabId,
 					'title': error['type'],
-					'text': error['text'].replace(/^\w+:\s*/, '') + (error.stack ? '\n' + formatStack(error.stack) : ''),
+					'text': error['text'].replace(/^\w+:\s*/, ''),
 					'buttons': [
 						{
 							'title': source.length <= 60 ? source : ('...' + source.substr(-57)),
