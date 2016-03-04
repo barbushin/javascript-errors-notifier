@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>JavaScript Errors Notifier</title>
+	<script type="text/javascript" src="options.js"></script>
+</head>
+<body>
+
+<div class="options" id="optionsBlock" style="white-space: nowrap">
+
+	<p id="domainsNotificationOptions" style="display:none">
+		Show errors notifications for the following domains:<br />
+		<textarea id="notificationDomains" rows="8" cols="40" placeholder="localhost
+example.com
+subdomain.example.com"></textarea>
+	</p>
+
+	<input type="checkbox" id="traceCheckbox" />
+	Show errors stack trace<br />
+
+	<input type="checkbox" id="columnCheckbox" />
+	Show errors column number<br />
+
+	<div id="domainNotificationOptions" style="display:none">
+		<input type="checkbox" id="notifyCheckbox" />
+		<span id="notificationOptionText"></span><br />
+	</div>
+
+	<input type="checkbox" id="ignore404external" />
+	Ignore external domains errors (fixes AdBlock & etc errors)<br />
+
+	<input type="checkbox" id="ignore404js" />
+	Ignore missing .js files error<br />
+
+	<input type="checkbox" id="ignore404css" />
+	Ignore missing .css files error<br />
+
+	<input type="checkbox" id="ignore404others" />
+	Ignore missing images & etc files error
+
+	<div id="recommendation" style="margin-top: 10px;">
+		* If you like this extension, you can write some feedback: <strong> <a style="color: green" href="http://goo.gl/rIjsXk" target="_blank" id="openRecommendation">Yes</a> / <a style="color: red" href="#" id="hideRecommendation">No</a></strong>
+	</div>
+
+</div>
+
+
+</body>
+</html>

@@ -22,6 +22,7 @@
 			"run_at": "document_start"
 		}
 	],
+	"options_page": "options.html",
 	"icons": {
 		"128": "img/logo_128.png",
 		"16": "img/error_16.png",

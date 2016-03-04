@@ -23,42 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	request.host = decodeURIComponent(new RegExp('.*?\\&host=(.+)&', 'g').exec(window.location.href)[1]);
 	request.tabId = +decodeURIComponent(new RegExp('.*?\\&tabId=(.+)', 'g').exec(window.location.href)[1]);
 
-	document.getElementById('notificationOptionText').innerHTML = 'Show notification popups for errors on <strong>' + request.host + '</strong> domain';
-
-	var options = {
-		columnCheckbox: 'showColumn',
-		traceCheckbox: 'showTrace',
-		notifyCheckbox: 'notify_' + request.host,
-		ignore404js : 'ignore404js',
-		ignore404css: 'ignore404css',
-		ignore404others: 'ignore404others',
-		ignore404external: 'ignore404external'
-	};
-
-	for(var id in options) {
-		var option = options[id];
-		var checkbox = document.getElementById(id);
-		if(localStorage[option]) {
-			checkbox.checked = true;
-		}
-		checkbox.onchange = (function(option) {
-			return function() {
-				if(this.checked) {
-					localStorage[option] = true;
-				}
-				else {
-					if(localStorage[option]) {
-						delete localStorage[option];
-					}
-				}
-			}
-		})(option);
-	}
-	document.getElementById('optionsLink').onclick = function() {
-		this.parentNode.remove();
-		document.getElementById('optionsBlock').style.display = 'block';
-	};
-
 	document.getElementById('clearLink').onclick = function() {
 		chrome.pageAction.hide(request.tabId);
 		chrome.tabs.sendMessage(request.tabId, {
@@ -70,22 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	document.getElementById('copyLink').onclick = function() {
 		var isWindows = navigator.appVersion.indexOf('Windows') != -1;
-		copyToClipboard(request.errors.replace(/<br\/>/g,  isWindows ? '\r\n' : '\n').replace(/<.*?>/g, ''));
+		copyToClipboard(request.errors.replace(/<br\/>/g, isWindows ? '\r\n' : '\n').replace(/<.*?>/g, ''));
 		window.close();
 	};
-
-	if(localStorage['jscrNotified'] || localStorage['isRecommended']) {
-		document.getElementById('recommendation').remove();
-	}
-	else {
-		var linksIds = ['openRecommendation', 'hideRecommendation'];
-		for(var i in linksIds) {
-			document.getElementById(linksIds[i]).onclick = function() {
-				localStorage['isRecommended'] = 3;
-				window.close();
-				return this.id == 'openRecommendation';
-			};
-		}
-	}
 });
 
