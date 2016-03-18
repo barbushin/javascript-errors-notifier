@@ -1,56 +1,34 @@
-<script type="text/javascript" src="popup.js" xmlns="http://www.w3.org/1999/html"></script>
-<style>
-    pre {
-        white-space: nowrap;
-        width: 100%;
-        padding: 2px;
-        margin: 0;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>JavaScript Errors Notifier</title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script type="text/javascript" src="common.js"></script>
+	<script type="text/javascript" src="popup.js"></script>
+	<link rel="stylesheet" type="text/css" href="styles.css" />
+	<style>
+		body {
+			margin-left: 5px;
+			margin-right: 5px;
+			margin-top: 5px;
+			margin-bottom: 0;
+		}
+	</style>
+</head>
+<body>
 
-    #errors {
-        color: red;
-    }
-
-    a {
-        color: red;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    .options {
-        margin-top: 15px;
-        color: dimgrey;
-        font-size: 1em;
-        display: none;
-    }
-
-    .linksBlock {
-        color: dimgrey;
-    }
-
-    .linksBlock a {
-        color: dimgrey;
-    }
-
-</style>
 <pre><span id="errors"></span>
 
-
-	<div style="display:block; margin-top: 10px;" class="linksBlock">
-
-
-        <a href="#" id="copyLink">Copy</a> 	&#8226;
-        <a href="#" id="clearLink">Clear</a> &#8226;
-        <a href="options.html" id="optionsLink">Options</a>
-
-        <div style=" position:relative;float:right">
-            <a href="https://github.com/barbushin/javascript-errors-notifier/issues" target="_blank">GitHub</a>
-        </div>
-
-
-    </div>
+	<div class="buttonsBlock">
+		<a href="#x" title="Copy"><img id="copy" src="img/copy.png" /></a
+		><a href="#x"><img id="showPopup" src="img/popup_off.png" /></a
+		><a href="#x"><img id="showIcon" src="img/icon_off.png" /></a
+		><a href="options.html" title="Options (global)"><img src="img/settings.png" /></a
+		><a href="#x" id="clear" title="Clear"><img src="img/close.png" /></a>
+	</div>
 
 </pre>
+
+</body>
+</html>

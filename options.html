@@ -3,44 +3,74 @@
 <head>
 	<meta charset="UTF-8">
 	<title>JavaScript Errors Notifier</title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script type="text/javascript" src="common.js"></script>
 	<script type="text/javascript" src="options.js"></script>
 </head>
 <body>
 
+<h2>Global options</h2>
+
 <div class="options" id="optionsBlock" style="white-space: nowrap">
 
-	<p id="domainsNotificationOptions" style="display:none">
-		Show errors notifications for the following domains:<br />
-		<textarea id="notificationDomains" rows="8" cols="40" placeholder="localhost
-example.com
-subdomain.example.com"></textarea>
-	</p>
 
-	<input type="checkbox" id="traceCheckbox" />
-	Show errors stack trace<br />
+	<label>
+		<input type="checkbox" id="showIcon" />
+		Show error notification icon on all domains
+	</label>
 
-	<input type="checkbox" id="columnCheckbox" />
-	Show errors column number<br />
+	<label>
+		<input type="checkbox" id="showPopup" />
+		Show popup with errors details on all domains
+	</label>
 
-	<div id="domainNotificationOptions" style="display:none">
-		<input type="checkbox" id="notifyCheckbox" />
-		<span id="notificationOptionText"></span><br />
-	</div>
+	<label>
+		<input type="checkbox" id="showPopupOnMouseOver" />
+		Show popup on notification icon mouseover
+	</label>
 
-	<input type="checkbox" id="ignore404external" />
-	Ignore external domains errors (fixes AdBlock & etc errors)<br />
+	<label>
+		<input type="checkbox" id="showTrace" />
+		Show errors stack trace
+	</label>
 
-	<input type="checkbox" id="ignore404js" />
-	Ignore missing .js files error<br />
+	<label>
+		<input type="checkbox" id="showColumn" />
+		Show errors column number
+	</label>
 
-	<input type="checkbox" id="ignore404css" />
-	Ignore missing .css files error<br />
+	<label>
+		<input type="checkbox" id="linkStackOverflow" />
+		Link errors text to <a href="http://stackoverflow.com" target="_blank">StackOverflow</a>
+	</label>
 
-	<input type="checkbox" id="ignore404others" />
-	Ignore missing images & etc files error
+
+	<label>
+		<input type="checkbox" id="ignoreExternal" />
+		Ignore external domains errors (fixes AdBlock & etc errors)
+	</label>
+
+	<label>
+		<input type="checkbox" id="ignore404js" />
+		Ignore missing .js files error
+	</label>
+
+	<label>
+		<input type="checkbox" id="ignore404css" />
+		Ignore missing .css files error
+	</label>
+
+	<label>
+		<input type="checkbox" id="ignore404others" />
+		Ignore missing images & etc files error
+	</label>
 
 	<div id="recommendation" style="margin-top: 10px;">
-		* If you like this extension, you can write some feedback: <strong> <a style="color: green" href="http://goo.gl/rIjsXk" target="_blank" id="openRecommendation">Yes</a> / <a style="color: red" href="#" id="hideRecommendation">No</a></strong>
+		* If you like this extension, you can write some feedback: <strong> <a style="color: #23EC23" href="http://goo.gl/rIjsXk" target="_blank" id="openRecommendation">Yes</a> / <a style="color: white" href="#" id="hideRecommendation">No</a></strong>
+	</div>
+
+	<div class="buttonsBlock">
+		<a href="#x" id="close" title="Close"><img src="img/close.png" /></a>
 	</div>
 
 </div>

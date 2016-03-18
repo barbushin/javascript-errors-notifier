@@ -1,32 +1,31 @@
 {
 	"name": "JavaScript Errors Notifier",
 	"short_name": "js_error",
-	"description": "Notifies JavaScript errors by icon in address bar or notification popup(optional)",
-	"version": "2.2.5",
+	"description": "Notifies JavaScript errors by icon in address bar or notification popup",
+	"version": "3.0.0",
 	"manifest_version": 2,
 	"background": {
 		"scripts": [
-			"notifications.js",
 			"background.js"
 		]
 	},
 	"content_scripts": [
 		{
 			"all_frames": true,
-			"js": ["content.js"],
+			"js": [
+				"content.js"
+			],
 			"matches": [
-				"http://*/*",
-				"https://*/*",
-				"file://*/*"
+				"<all_urls>"
 			],
 			"run_at": "document_start"
 		}
 	],
 	"options_page": "options.html",
 	"icons": {
-		"128": "img/logo_128.png",
+		"128": "img/error_128.png",
 		"16": "img/error_16.png",
-		"48": "img/logo_48.png"
+		"48": "img/error_48.png"
 	},
 	"incognito": "spanning",
 	"page_action": {
@@ -36,10 +35,16 @@
 		},
 		"default_popup": "popup.html"
 	},
+	"web_accessible_resources": [
+		"img/error_64.png",
+		"img/error_38.png",
+		"img/error_19.png",
+		"popup.html",
+		"options.html"
+	],
 	"permissions": [
 		"<all_urls>",
 		"tabs",
-		"notifications",
 		"storage",
 		"webRequest"
 	]

@@ -8,10 +8,30 @@ function formatStackForPopup(stack) {
 	var lines = [];
 	for(var i in stack) {
 		var call = stack[i];
-		lines.push((stack.length > 1 ? '#' + call.num + ' ' : '') + '<a href="view-source:' + call.url + '" target="_blank">' + call.url + '</a> ' + call.method);
+		lines.push((stack.length > 1 ? '&nbsp;#' + call.num + ' ' : '') + '<a href="view-source:' + call.url + '" target="_blank">' + call.url + '</a> ' + call.method);
 	}
 	return lines.join('<br/>');
 }
+
+function getBaseHostByUrl(url) {
+	var localUrlRegexp = /(file:\/\/.*)|(:\/\/[^.:]+([\/?]|$))/;
+	var rootHostRegexp = /:\/\/(([\w-]+\.\w+)|(\d+\.\d+\.\d+\.\d+)|(\w+:\w+:\w+:[\w:]+))([\/?]|$)/;
+	var subDomainRegexp = /:\/\/.*\.([\w-]+\.\w+)([\/?]|$)/;
+	return localUrlRegexp.exec(url) ? 'localhost' : (rootHostRegexp.exec(url) || subDomainRegexp.exec(url))[1];
+}
+
+function initDefaultOptions() {
+	var optionsValues = {
+		showIcon: true,
+		ignore404others: true
+	};
+	for(var option in optionsValues) {
+		if(typeof localStorage[option] == 'undefined') {
+			localStorage[option] = optionsValues[option] ? 1 : '';
+		}
+	}
+}
+initDefaultOptions();
 
 // Ignore net::ERR_BLOCKED_BY_CLIENT initiated by AdPlus & etc
 var ignoredUrlsHashes = {};
@@ -51,27 +71,57 @@ chrome.webRequest.onErrorOccurred.addListener(function(e) {
 	}
 }, {urls: ["<all_urls>"]});
 
-chrome.extension.onRequest.addListener(function(request, sender) {
-	var errorsHtml = [];
-	var stackLineRegExp = new RegExp('^(.*?)\\(?(https?://.*?)(\\)|$)');
+function handleInitRequest(data, sender) {
+	var tabHost = getBaseHostByUrl(data.url);
+	chrome.tabs.get(sender.tab.id, function callback() { // mute closed tab error
+		if(chrome.runtime.lastError) {
+			return;
+		}
+		chrome.pageAction.setTitle({
+			tabId: sender.tab.id,
+			title: 'No errors on this page'
+		});
+		chrome.pageAction.setPopup({
+			tabId: sender.tab.id,
+			popup: 'popup.html?host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id
+		});
+		chrome.pageAction.show(sender.tab.id);
+	});
+	return {
+		showIcon: typeof localStorage['icon_' + tabHost] != 'undefined' ? localStorage['icon_' + tabHost] : localStorage['showIcon'],
+		showPopup: typeof localStorage['popup_' + tabHost] != 'undefined' ? localStorage['popup_' + tabHost] : localStorage['showPopup'],
+		showPopupOnMouseOver: localStorage['showPopupOnMouseOver']
 
-	for(var i in request.errors) {
-		var error = request.errors[i];
-		if(localStorage['ignore404external'] && request.host != /:\/\/(.*?)(\/|$)/.exec(error.url)[1]) {
+	};
+}
+
+function handleErrorsRequest(data, sender) {
+	var popupErrors = [];
+	var stackLineRegExp = new RegExp('^(.*?)\\(?(https?://.*?)(\\)|$)');
+	var tabHost = getBaseHostByUrl(data.url);
+
+	for(var i in data.errors) {
+		var error = data.errors[i];
+		var errorHost = getBaseHostByUrl(error.url);
+		if(localStorage['ignoreExternal'] && errorHost != tabHost) {
 			continue;
 		}
 		if(error.is404) {
 			if(ignoredUrlsHashes[getIgnoredUrlHash(error.url)] || isUrlIgnoredByType(error.url)) {
-				delete request.errors[i];
+				delete data.errors[i];
 				continue;
 			}
 			error.type = 'File not found';
 			error.text = error.url;
-			errorsHtml.unshift('File not found: ' + htmlentities(error.url));
+			popupErrors.unshift('File not found: ' + htmlentities(error.url));
 		}
 		else {
-			var errorHtml = '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>';
 			error.text = error.text.replace(/^Uncaught /g, '');
+
+			var errorHtml = localStorage['linkStackOverflow']
+				? '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>'
+				: htmlentities(error.text);
+
 			var m = new RegExp('^(\\w+):\s*(.+)').exec(error.text);
 			error.type = m ? m[1] : 'Uncaught Error';
 
@@ -95,11 +145,11 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 			else {
 				errorHtml += '<br/><a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>';
 			}
-			errorsHtml.push(errorHtml);
+			popupErrors.push(errorHtml);
 		}
 	}
 
-	if(!errorsHtml.length) {
+	if(!popupErrors.length) {
 		return;
 	}
 
@@ -107,6 +157,7 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 		tabId: sender.tab.id,
 		title: 'There are some errors on this page. Click to see details.'
 	});
+
 	chrome.pageAction.setIcon({
 		tabId: sender.tab.id,
 		path: {
@@ -114,28 +165,31 @@ chrome.extension.onRequest.addListener(function(request, sender) {
 			"38": "img/error_38.png"
 		}
 	});
+
+	var popupUri = 'popup.html?errors=' + encodeURIComponent(popupErrors.join('<br/><br/>')) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
+
 	chrome.pageAction.setPopup({
 		tabId: sender.tab.id,
-		popup: 'popup.html?errors=' + encodeURIComponent(errorsHtml.join('<br/><br/>')) + '&host=' + encodeURIComponent(request.host) + '&tabId=' + sender.tab.id
+		popup: popupUri
 	});
+
 	chrome.pageAction.show(sender.tab.id);
 
-	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-		if(request['_tabId']) {
-			chrome.pageAction.setTitle({
-					tabId: sender.tab.id,
-					title: 'No errors on this page'
-				});
-			sendResponse({
-				'tabId': sender.tab.id
-			});
-			return true;
-		}
-	});
+	return chrome.extension.getURL(popupUri);
+}
 
-	if(localStorage['notify_' + request.host]) {
-		notificationsHandler.showErrorsNotifications(request.errors, sender.tab.id);
+chrome.runtime.onMessage.addListener(function(data, sender, sendResponse) {
+	var response;
+
+	if(data._initPage) {
+		response = handleInitRequest(data, sender);
+	}
+	else if(data._errors) {
+		response = handleErrorsRequest(data, sender);
+	}
+
+	if(response) {
+		sendResponse(response);
+		return true;
 	}
 });
-
-chrome.tabs.onUpdated.addListener(notificationsHandler.closeTabNotifications);

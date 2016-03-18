@@ -1,23 +1,96 @@
 new function() {
 
 	var errors = [];
-	var tabId = null;
-	var timer = null;
+	var errorsLimit = 100;
+	var tabId;
+	var timer;
+	var icon;
+	var popup;
+	var options;
+	var isIFrame = window.top != window;
 
-	document.addEventListener('ErrorToExtension', function(e) {
-		var error = e.detail;
+	function showPopup(popupUrl) {
+		if(!popup) {
+			popup = document.createElement('iframe');
+			popup.src = popupUrl;
+			popup.frameBorder = 0;
+			popup.style.cssText = 'position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 2147483647 !important;';
+			popup.height = '50px';
+			(document.body || document.documentElement).appendChild(popup);
+		}
+		else {
+			popup.contentWindow.postMessage({
+				_reloadPopup: true,
+				url: popupUrl
+			}, '*');
+		}
+	}
+
+	function showErrorNotification(popupUrl) {
+		if(options.showPopup) {
+			showPopup(popupUrl);
+		}
+
+		if(!icon && (options.showIcon || options.showPopup)) {
+			icon = document.createElement('img');
+			icon.src = chrome.extension.getURL('img/error_38.png');
+			icon.title = 'Some errors occurred on this page. Click to see details.';
+			icon.style.cssText = 'position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important;';
+			icon.onclick = function() {
+				if(!popup) {
+					showPopup(popupUrl);
+				}
+				else {
+					popup.remove();
+					popup = null;
+				}
+			};
+			if(options.showPopupOnMouseOver) {
+				icon.onmouseover = function() {
+					if(!popup) {
+						showPopup(popupUrl);
+					}
+				};
+			}
+			(document.body || document.documentElement).appendChild(icon);
+		}
+	}
+
+	function handleNewError(error) {
 		var lastError = errors[errors.length - 1];
-		if(!lastError || (lastError.text != error.text || lastError.url != error.url || lastError.line != error.line)) {
+		if(!lastError || (lastError.text != error.text || lastError.url != error.url || lastError.line != error.line || lastError.col != error.col)) {
 			errors.push(error);
+			if(errors.length > errorsLimit) {
+				errors.shift();
+			}
 			if(!timer) {
 				timer = window.setTimeout(function() {
 					timer = null;
-					chrome.extension.sendRequest({
+					chrome.runtime.sendMessage({
+						_errors: true,
 						errors: errors,
-						host: window.location.host
+						url: window.top.location.href
+					}, function(popupUrl) {
+						if(popupUrl) {
+							showErrorNotification(popupUrl);
+						}
 					});
 				}, 200);
 			}
+		}
+	}
+
+	document.addEventListener('ErrorToExtension', function(e) {
+		var error = e.detail;
+		if(isIFrame) {
+			window.top.postMessage({
+				_iframeError: true,
+				_fromJEN: true,
+				error: error
+			}, '*');
+		}
+		else {
+			handleNewError(error);
 		}
 	});
 
@@ -82,18 +155,50 @@ new function() {
 	(document.head || document.documentElement).appendChild(script);
 	script.parentNode.removeChild(script);
 
-	chrome.runtime.sendMessage({
-		'_tabId': true
-	}, function(response) {
-		if(response) {
-			tabId = response['tabId'];
+	function handleInternalMessage(data) {
+		if(!isIFrame && (!data.tabId || data.tabId == tabId)) {
+			if(data._clear) {
+				errors = [];
+				if(popup) {
+					popup.remove();
+					popup = null;
+				}
+				if(icon) {
+					icon.remove();
+					icon = null;
+				}
+			}
+			else if(data._resize) {
+				var maxHeight = Math.round(window.innerHeight * 0.7);
+				var maxWidth = Math.round(window.innerWidth * 0.7);
+				popup.height = (data.height < maxHeight ? data.height : maxHeight) + 'px';
+				popup.width = (data.width < maxWidth ? data.width : maxWidth) + 'px';
+				popup.style.height = popup.height;
+				popup.style.width = popup.width;
+			}
+			else if(data._closePopup && popup) {
+				popup.style.display = 'none';
+			}
+			else if(data._iframeError) {
+				handleNewError(data.error);
+			}
+		}
+	}
+
+	chrome.runtime.onMessage.addListener(handleInternalMessage);
+
+	window.addEventListener('message', function(event) {
+		if(typeof event.data == 'object' && event.data._fromJEN) {
+			handleInternalMessage(event.data);
 		}
 	});
 
-	chrome.runtime.onMessage.addListener(function(request) {
-		if(request['_clear'] && request['tabId'] == tabId) {
-			errors = [];
-		}
-	});
-
+	if(!isIFrame) {
+		chrome.runtime.sendMessage({
+			_initPage: true,
+			url: window.location.href
+		}, function(response) {
+			options = response;
+		});
+	}
 };
