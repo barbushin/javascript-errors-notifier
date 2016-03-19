@@ -42,14 +42,14 @@ document.addEventListener('DOMContentLoaded', function() {
 	]);
 
 	var popupNode = document.getElementById('showPopup');
-	popupNode.title = 'Show popup with errors details on ' + request.host;
+	popupNode.title = 'Show popup with error details on ' + request.host;
 	initOptionSwitcher(popupNode, 'popup_' + request.host, [
 		'img/popup_off.png',
 		'img/popup_on.png'
 	]);
 
 	if(!request.errors) {
-		errorsNode.innerHTML = '<p style="padding: 20px">There is no errors on this page :(</p>';
+		errorsNode.innerHTML = '<p style="padding: 20px">There are no errors on this page :)</p>';
 		copyNode.remove();
 		clearNode.remove();
 	}
