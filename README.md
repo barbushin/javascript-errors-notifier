@@ -3,7 +3,7 @@ JavaScript Errors Notifier
 
 ## Installation
 
-Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd) extension to your Google Chrome, and check [test page](http://php-console.com/js_errors.html) to see how JavaScript errors will be handled in your browser.
+Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd) extension to your Google Chrome, and check the [test page](http://php-console.com/js_errors.html) to see how JavaScript errors will be handled in your browser.
 
 ## Features
 
