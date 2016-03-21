@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		'showColumn',
 		'showTrace',
 		'linkStackOverflow',
+		'linkViewSource',
 		'ignore404js',
 		'ignore404css',
 		'ignore404others',

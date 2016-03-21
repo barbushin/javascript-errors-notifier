@@ -1,25 +1,28 @@
 var request = parseUrl(window.location.href);
+var isIFrame = window.top != window;
 
 function parseUrl(url) {
 	var params = {};
-	var a = /\?(.*)/.exec(url)[1].split('&');
-	for(var i in a) {
-		var b = a[i].split('=');
-		params[decodeURIComponent(b[0])] = decodeURIComponent(b[1]);
-	}
-	if(params.tabId) {
-		params.tabId = +params.tabId;
+	var query = /\?(.*)/.exec(url);
+	if(query) {
+		var kvPairs = query[1].split('&');
+		for(var i in kvPairs) {
+			var kv = kvPairs[i].split('=');
+			params[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+		}
+		if(params.tabId) {
+			params.tabId = +params.tabId;
+		}
 	}
 	return params;
 }
-
 
 function sendMessage(data) {
 	data._fromJEN = true;
 	if(isIFrame) {
 		window.top.postMessage(data, '*');
 	}
-	else if(request) {
+	else if(request.tabId) {
 		chrome.tabs.sendMessage(request.tabId, data);
 	}
 }
@@ -48,5 +51,4 @@ function closePopup(clear) {
 	}
 }
 
-var isIFrame = window.top != window;
 window.onload = autoSize;

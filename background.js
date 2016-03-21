@@ -8,7 +8,10 @@ function formatStackForPopup(stack) {
 	var lines = [];
 	for(var i in stack) {
 		var call = stack[i];
-		lines.push((stack.length > 1 ? '&nbsp;#' + call.num + ' ' : '') + '<a href="view-source:' + call.url + '" target="_blank">' + call.url + '</a> ' + call.method);
+		lines.push((stack.length > 1 ? '&nbsp;#' + call.num + ' ' : '') + (localStorage['linkViewSource']
+					? '<a href="view-source:' + call.url + '" target="_blank">' + call.url + '</a>'
+					: call.url
+			) + ' ' + call.method);
 	}
 	return lines.join('<br/>');
 }
@@ -144,7 +147,8 @@ function handleErrorsRequest(data, sender, sendResponse) {
 				errorHtml += '<br/>' + formatStackForPopup(lines);
 			}
 			else {
-				errorHtml += '<br/><a href="view-source:' + error.url + '" target="_blank">' + error.url.replace(/[\/\\]$/g, '') + (error.line ? ':' + error.line : '') + '</a>';
+				var url = error.url + (error.line ? ':' + error.line : '');
+				errorHtml += '<br/>' + (localStorage['linkViewSource'] ? '<a href="view-source:' + url + '" target="_blank">' + url + '</a>' : url);
 			}
 			popupErrors.push(errorHtml);
 		}

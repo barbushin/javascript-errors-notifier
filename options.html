@@ -6,6 +6,16 @@
 	<link rel="stylesheet" type="text/css" href="styles.css">
 	<script type="text/javascript" src="common.js"></script>
 	<script type="text/javascript" src="options.js"></script>
+	<style>
+		a {
+			font-weight: 600;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+
+
+	</style>
 </head>
 <body>
 
@@ -41,8 +51,14 @@
 
 	<label>
 		<input type="checkbox" id="linkStackOverflow" />
-		Link errors text to <a href="http://stackoverflow.com" target="_blank">StackOverflow</a>
+		Link error text to <a href="http://stackoverflow.com" target="_blank">StackOverflow</a> search
 	</label>
+
+	<label>
+		<input type="checkbox" id="linkViewSource" />
+		Link error source to <a href="view-source:http://localhost/js_errors.html" target="_blank">view-source:</a>
+	</label>
+
 
 
 	<label>
@@ -71,9 +87,15 @@
 		Ignore missing images & etc files error
 	</label>
 
-	<div id="recommendation" style="margin-top: 10px;">
-		* If you like this extension, you can write some feedback: <strong> <a style="color: #23EC23" href="http://goo.gl/rIjsXk" target="_blank" id="openRecommendation">Yes</a> / <a style="color: white" href="#" id="hideRecommendation">No</a></strong>
+	<div style="margin-top: 10px;">
+		* Contribute to source code or request new feature on <a href="https://github.com/barbushin/javascript-errors-notifier" target="_blank">GitHub</a>
+
+		<div id="recommendation">
+			* Rate this extension on Google Chrome WebStore: <strong> <a href="http://goo.gl/rIjsXk" target="_blank" id="openRecommendation">Yes</a> / <a href="#" id="hideRecommendation">No</a></strong>
+		</div>
+
 	</div>
+
 
 	<div class="buttonsBlock">
 		<a href="#x" id="close" title="Close"><img src="img/close.png" /></a>
