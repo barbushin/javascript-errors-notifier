@@ -1,3 +1,19 @@
+var request = parseUrl(window.location.href);
+
+function parseUrl(url) {
+	var params = {};
+	var a = /\?(.*)/.exec(url)[1].split('&');
+	for(var i in a) {
+		var b = a[i].split('=');
+		params[decodeURIComponent(b[0])] = decodeURIComponent(b[1]);
+	}
+	if(params.tabId) {
+		params.tabId = +params.tabId;
+	}
+	return params;
+}
+
+
 function sendMessage(data) {
 	data._fromJEN = true;
 	if(isIFrame) {
