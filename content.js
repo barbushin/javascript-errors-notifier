@@ -171,8 +171,10 @@ new function() {
 			else if(data._resize) {
 				var maxHeight = Math.round(window.innerHeight * 0.7);
 				var maxWidth = Math.round(window.innerWidth * 0.7);
-				popup.height = (data.height < maxHeight ? data.height : maxHeight) + 'px';
-				popup.width = (data.width < maxWidth ? data.width : maxWidth) + 'px';
+				var height = data.height < maxHeight ? data.height : maxHeight;
+				var width = data.width < maxWidth ? data.width : maxWidth;
+				popup.height = (width == maxWidth ? height + 10 : height) + 'px'; // scroll fix
+				popup.width = (height == maxHeight ? width + 10 : width) + 'px'; // scroll fix
 				popup.style.height = popup.height;
 				popup.style.width = popup.width;
 			}

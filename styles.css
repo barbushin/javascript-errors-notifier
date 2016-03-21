@@ -8,7 +8,8 @@ pre {
 	white-space: nowrap;
 	width: 100%;
 	padding: 2px;
-	margin: 0;
+	margin: 0 0 25px 0;
+
 }
 
 a {
@@ -29,9 +30,11 @@ input[type=checkbox]:hover {
 }
 
 .buttonsBlock {
-	text-space-collapse: discard;
-	text-align: right;
-	margin-top: 10px;
+	position: fixed;
+	right: 0;
+	bottom: 2px;
+	background: #CA0E0E;
+	padding: 5px 0 0 5px;
 }
 
 ::-webkit-scrollbar {
@@ -44,7 +47,7 @@ input[type=checkbox]:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-	background: #ba2929;
+	background: #a31919;
 }
 
 ::-webkit-scrollbar-corner {
