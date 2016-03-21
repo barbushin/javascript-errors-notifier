@@ -1,3 +1,5 @@
+var switchersStates = {};
+
 function copyToClipboard(str) {
 	document.oncopy = function(event) {
 		event.clipboardData.setData('text/plain', str);
@@ -6,11 +8,13 @@ function copyToClipboard(str) {
 	document.execCommand('Copy', false, null);
 }
 
-function initOptionSwitcher(imgNode, option, srcValues) {
-	imgNode.src = srcValues[+!!localStorage[option]]; // :D
+function initOptionSwitcher(imgNode, domainOption, globalOption, srcValues) {
+	switchersStates[domainOption] = domainOption in localStorage ? +localStorage[domainOption] : (localStorage[globalOption] ? 1 : 0);
+	imgNode.src = srcValues[switchersStates[domainOption]];
 	imgNode.onclick = function() {
-		localStorage[option] = !!localStorage[option] ? '' : 1; // :D
-		imgNode.src = srcValues[+localStorage[option]];
+		switchersStates[domainOption] = +!switchersStates[domainOption];
+		localStorage[domainOption] = switchersStates[domainOption] ? 1 : '';
+		imgNode.src = srcValues[switchersStates[domainOption]];
 	};
 }
 
@@ -21,14 +25,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	var iconNode = document.getElementById('showIcon');
 	iconNode.title = 'Show error notification icon on ' + request.host;
-	initOptionSwitcher(iconNode, 'icon_' + request.host, [
+	initOptionSwitcher(iconNode, 'icon_' + request.host, 'showIcon', [
 		'img/icon_off.png',
 		'img/icon_on.png'
 	]);
 
 	var popupNode = document.getElementById('showPopup');
 	popupNode.title = 'Show popup with errors details on ' + request.host;
-	initOptionSwitcher(popupNode, 'popup_' + request.host, [
+	initOptionSwitcher(popupNode, 'popup_' + request.host, 'showPopup', [
 		'img/popup_off.png',
 		'img/popup_on.png'
 	]);
