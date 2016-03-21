@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		'ignore404js',
 		'ignore404css',
 		'ignore404others',
-		'ignoreExternal'
+		'ignoreExternal',
+		'ignoreBlockedByClient'
 	];
 
 	for(var i in optionsIds) {

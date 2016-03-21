@@ -23,7 +23,8 @@ function getBaseHostByUrl(url) {
 function initDefaultOptions() {
 	var optionsValues = {
 		showIcon: true,
-		ignore404others: true
+		ignore404others: true,
+		ignoreBlockedByClient: true
 	};
 	for(var option in optionsValues) {
 		if(typeof localStorage[option] == 'undefined') {
@@ -56,7 +57,7 @@ function getIgnoredUrlHash(url) {
 }
 
 chrome.webRequest.onErrorOccurred.addListener(function(e) {
-	if(e.error == 'net::ERR_BLOCKED_BY_CLIENT') {
+	if(localStorage['ignoreBlockedByClient'] && e.error == 'net::ERR_BLOCKED_BY_CLIENT') {
 		var url = getIgnoredUrlHash(e.url);
 		if(!isUrlIgnoredByType(url)) {
 			if(ignoredUrlsHashes[url]) { // move url in the end of list
@@ -71,7 +72,7 @@ chrome.webRequest.onErrorOccurred.addListener(function(e) {
 	}
 }, {urls: ["<all_urls>"]});
 
-function handleInitRequest(data, sender) {
+function handleInitRequest(data, sender, sendResponse) {
 	var tabHost = getBaseHostByUrl(data.url);
 	chrome.tabs.get(sender.tab.id, function callback() { // mute closed tab error
 		if(chrome.runtime.lastError) {
@@ -87,15 +88,15 @@ function handleInitRequest(data, sender) {
 		});
 		chrome.pageAction.show(sender.tab.id);
 	});
-	return {
+	sendResponse({
 		showIcon: typeof localStorage['icon_' + tabHost] != 'undefined' ? localStorage['icon_' + tabHost] : localStorage['showIcon'],
 		showPopup: typeof localStorage['popup_' + tabHost] != 'undefined' ? localStorage['popup_' + tabHost] : localStorage['showPopup'],
 		showPopupOnMouseOver: localStorage['showPopupOnMouseOver']
 
-	};
+	});
 }
 
-function handleErrorsRequest(data, sender) {
+function handleErrorsRequest(data, sender, sendResponse) {
 	var popupErrors = [];
 	var stackLineRegExp = new RegExp('^(.*?)\\(?(https?://.*?)(\\)|$)');
 	var tabHost = getBaseHostByUrl(data.url);
@@ -153,43 +154,43 @@ function handleErrorsRequest(data, sender) {
 		return;
 	}
 
-	chrome.pageAction.setTitle({
-		tabId: sender.tab.id,
-		title: 'There are some errors on this page. Click to see details.'
-	});
-
-	chrome.pageAction.setIcon({
-		tabId: sender.tab.id,
-		path: {
-			"19": "img/error_19.png",
-			"38": "img/error_38.png"
+	chrome.tabs.get(sender.tab.id, function callback() { // mute closed tab error
+		if(chrome.runtime.lastError) {
+			return;
 		}
+
+		chrome.pageAction.setTitle({
+			tabId: sender.tab.id,
+			title: 'There are some errors on this page. Click to see details.'
+		});
+
+		chrome.pageAction.setIcon({
+			tabId: sender.tab.id,
+			path: {
+				"19": "img/error_19.png",
+				"38": "img/error_38.png"
+			}
+		});
+
+		var popupUri = 'popup.html?errors=' + encodeURIComponent(popupErrors.join('<br/><br/>')) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
+
+		chrome.pageAction.setPopup({
+			tabId: sender.tab.id,
+			popup: popupUri
+		});
+
+		chrome.pageAction.show(sender.tab.id);
+
+		sendResponse(chrome.extension.getURL(popupUri));
 	});
-
-	var popupUri = 'popup.html?errors=' + encodeURIComponent(popupErrors.join('<br/><br/>')) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
-
-	chrome.pageAction.setPopup({
-		tabId: sender.tab.id,
-		popup: popupUri
-	});
-
-	chrome.pageAction.show(sender.tab.id);
-
-	return chrome.extension.getURL(popupUri);
 }
 
 chrome.runtime.onMessage.addListener(function(data, sender, sendResponse) {
-	var response;
-
 	if(data._initPage) {
-		response = handleInitRequest(data, sender);
+		handleInitRequest(data, sender, sendResponse);
 	}
 	else if(data._errors) {
-		response = handleErrorsRequest(data, sender);
+		handleErrorsRequest(data, sender, sendResponse);
 	}
-
-	if(response) {
-		sendResponse(response);
-		return true;
-	}
+	return true;
 });
