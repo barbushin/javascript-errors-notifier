@@ -58,7 +58,9 @@ new function() {
 
 	function handleNewError(error) {
 		var lastError = errors[errors.length - 1];
-		if(!lastError || (lastError.text != error.text || lastError.url != error.url || lastError.line != error.line || lastError.col != error.col)) {
+		var isSameAsLast = lastError && lastError.text == error.text && lastError.url == error.url && lastError.line == error.line && lastError.col == error.col;
+		var isWrongUrl = !error.url || error.url.indexOf('://') === -1;
+		if(!isSameAsLast && !isWrongUrl) {
 			errors.push(error);
 			if(errors.length > errorsLimit) {
 				errors.shift();
