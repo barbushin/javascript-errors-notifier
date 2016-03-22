@@ -35,7 +35,7 @@ new function() {
 			icon = document.createElement('img');
 			icon.src = chrome.extension.getURL('img/error_38.png');
 			icon.title = 'Some errors occurred on this page. Click to see details.';
-			icon.style.cssText = 'position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important;';
+			icon.style.cssText = 'position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important; width: 48px !important; height: auto !important;';
 			icon.onclick = function() {
 				if(!popup) {
 					showPopup(popupUrl);
