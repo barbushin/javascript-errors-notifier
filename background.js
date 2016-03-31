@@ -17,9 +17,9 @@ function formatStackForPopup(stack) {
 }
 
 function getBaseHostByUrl(url) {
-	var localUrlRegexp = /(file:\/\/.*)|(:\/\/[^.:]+([\/?]|$))/;
-	var rootHostRegexp = /:\/\/(([\w-]+\.\w+)|(\d+\.\d+\.\d+\.\d+)|(\w+:\w+:\w+:[\w:]+))([\/?]|$)/;
-	var subDomainRegexp = /:\/\/.*\.([\w-]+\.\w+)([\/?]|$)/;
+	var localUrlRegexp = /(file:\/\/.*)|(:\/\/[^.:]+([\/?]|$))/; // file://
+	var rootHostRegexp = /:\/\/(([\w-]+\.\w+)|(\d+\.\d+\.\d+\.\d+)|(\[[\w:]+\]))([\/?:]|$)/; // domain.com | IPv4 | IPv6
+	var subDomainRegexp = /:\/\/.*\.([\w-]+\.\w+)([\/?:]|$)/; // sub.domain.com
 	return localUrlRegexp.exec(url) ? 'localhost' : (rootHostRegexp.exec(url) || subDomainRegexp.exec(url))[1];
 }
 
