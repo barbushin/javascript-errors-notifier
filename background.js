@@ -19,7 +19,7 @@ function formatStackForPopup(stack) {
 function getBaseHostByUrl(url) {
 	var localUrlRegexp = /(file:\/\/.*)|(:\/\/[^.:]+([\/?]|$))/; // file://
 	var rootHostRegexp = /:\/\/(([\w-]+\.\w+)|(\d+\.\d+\.\d+\.\d+)|(\[[\w:]+\]))([\/?:]|$)/; // domain.com | IPv4 | IPv6
-	var subDomainRegexp = /:\/\/.*\.([\w-]+\.\w+)([\/?:]|$)/; // sub.domain.com
+	var subDomainRegexp = /:\/\/[^\/]*\.([\w-]+\.\w+)([\/?:]|$)/; // sub.domain.com
 	return localUrlRegexp.exec(url) ? 'localhost' : (rootHostRegexp.exec(url) || subDomainRegexp.exec(url))[1];
 }
 
@@ -27,7 +27,8 @@ function initDefaultOptions() {
 	var optionsValues = {
 		showIcon: true,
 		ignore404others: true,
-		ignoreBlockedByClient: true
+		ignoreBlockedByClient: true,
+		relativeErrorUrl: true
 	};
 	for(var option in optionsValues) {
 		if(typeof localStorage[option] == 'undefined') {
@@ -103,6 +104,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 	var popupErrors = [];
 	var stackLineRegExp = new RegExp('^(.*?)\\(?((https?|file)://.*?)(\\)|$)');
 	var tabHost = getBaseHostByUrl(data.url);
+	var tabBaseUrl = (/^([\w-]+:\/\/[^\/?]+)/.exec(data.url) || [null, null])[1];
 
 	for(var i in data.errors) {
 		var error = data.errors[i];
@@ -181,7 +183,16 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			}
 		});
 
-		var popupUri = 'popup.html?errors=' + encodeURIComponent(popupErrors.join('<br/><br/>')) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
+		var errorsHtml = popupErrors.join('<br/><br/>');
+
+		if(localStorage['relativeErrorUrl'] && tabBaseUrl) {
+			errorsHtml = errorsHtml.split(tabBaseUrl + '/').join('/').split(tabBaseUrl).join('/');
+			if(localStorage['linkViewSource']) {
+				errorsHtml = errorsHtml.split('href="view-source:/').join('href="view-source:' + tabBaseUrl + '/');
+			}
+		}
+
+		var popupUri = 'popup.html?errors=' + encodeURIComponent(errorsHtml) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
 
 		chrome.pageAction.setPopup({
 			tabId: sender.tab.id,

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		'showTrace',
 		'linkStackOverflow',
 		'linkViewSource',
+		'relativeErrorUrl',
 		'ignore404js',
 		'ignore404css',
 		'ignore404others',
