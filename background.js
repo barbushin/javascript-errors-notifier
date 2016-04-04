@@ -141,7 +141,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 				for(var ii in lines) {
 					var m = stackLineRegExp.exec(lines[ii]);
 					var url = m ? m[2] : lines[ii];
-					var subUrl = /^(.*?):([\d:]+)/.exec(url);
+					var subUrl = (localStorage['showColumn'] ? /^(.*?):([\d:]+)$/ : /^(.*?)[:\d]*:(\d+)$/).exec(url);
 					lines[ii] = {
 						num: lines.length - ii,
 						url: subUrl ? subUrl[1] : url,
