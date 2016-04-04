@@ -4,18 +4,6 @@
 	return div.innerHTML;
 }
 
-function formatStackForPopup(stack) {
-	var lines = [];
-	for(var i in stack) {
-		var call = stack[i];
-		lines.push((stack.length > 1 ? '&nbsp;#' + call.num + ' ' : '') + (localStorage['linkViewSource']
-					? ('<a href="view-source:' + call.url + (call.line ? '#' + call.line : '') + '" target="_blank">' + call.url + (call.line ? ':' + call.line : '') + '</a>')
-					: (call.url + (call.line ? ':' + call.line : ''))
-			) + ' ' + call.method);
-	}
-	return lines.join('<br/>');
-}
-
 function getBaseHostByUrl(url) {
 	var localUrlRegexp = /(file:\/\/.*)|(:\/\/[^.:]+([\/?]|$))/; // file://
 	var rootHostRegexp = /:\/\/(([\w-]+\.\w+)|(\d+\.\d+\.\d+\.\d+)|(\[[\w:]+\]))([\/?:]|$)/; // domain.com | IPv4 | IPv6
@@ -135,21 +123,23 @@ function handleErrorsRequest(data, sender, sendResponse) {
 				error.line = error.line + ':' + error.col;
 			}
 
-			if(localStorage['showTrace'] && error.stack) {
-				var lines = error.stack.replace(/\n\s*at\s+/g, '\n').split('\n');
+			var lines;
+			if(localStorage['showTrace'] && error.stack && (lines = error.stack.replace(/\n\s*at\s+/g, '\n').split('\n')).length > 2) {
 				lines.shift();
 				for(var ii in lines) {
 					var m = stackLineRegExp.exec(lines[ii]);
 					var url = m ? m[2] : lines[ii];
 					var subUrl = (localStorage['showColumn'] ? /^(.*?):([\d:]+)$/ : /^(.*?):(\d+)(:\d+)?$/).exec(url);
-					lines[ii] = {
-						num: lines.length - ii,
-						url: subUrl ? subUrl[1] : url,
-						line: subUrl ? subUrl[2] : null,
-						method: (m && m[1].trim() ? m[1].trim() + '()' : '')
-					};
+					var num = lines.length - ii;
+					var url = subUrl ? subUrl[1] : url;
+					var line = subUrl ? subUrl[2] : null;
+					var method = (m && m[1].trim() ? m[1].trim() + '()' : '');
+					errorHtml += '<br/>' + ((lines.length > 1 ? '&nbsp;#' + num + ' ' : '') + (localStorage['linkViewSource']
+								? ('<a href="view-source:' + url + (line ? '#' + line : '') + '" target="_blank">' + url + (line ? ':' + line : '') + '</a>')
+								: (url + (line ? ':' + line : ''))
+						) + ' ' + method);
 				}
-				errorHtml += '<br/>' + formatStackForPopup(lines);
+
 			}
 			else {
 				var url = error.url + (error.line ? ':' + error.line : '');
