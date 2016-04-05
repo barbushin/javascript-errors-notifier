@@ -29,7 +29,3 @@ Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javas
 * Check [Issues](https://github.com/barbushin/javascript-errors-notifier/issues) page for feature requests.
 * Please keep original code style: use `tab` for indention, and all other spacing & braces formatting same as in original.
 * Test your code twice :) Thank you!
-
-## Recommended
-
-Google Chrome extension [PHP Console](https://chrome.google.com/webstore/detail/php-console/nfhmhhlpfleoednkpnnnkolmclajemef)
