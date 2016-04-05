@@ -90,7 +90,6 @@ function handleInitRequest(data, sender, sendResponse) {
 
 function handleErrorsRequest(data, sender, sendResponse) {
 	var popupErrors = [];
-	var stackLineRegExp = new RegExp('^(.*?)\\(?((https?|file)://.*?)(\\)|$)');
 	var tabHost = getBaseHostByUrl(data.url);
 	var tabBaseUrl = (/^([\w-]+:\/\/[^\/?]+)/.exec(data.url) || [null, null])[1];
 
@@ -127,14 +126,13 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			if(localStorage['showTrace'] && error.stack && (lines = error.stack.replace(/\n\s*at\s+/g, '\n').split('\n')).length > 2) {
 				lines.shift();
 				for(var ii in lines) {
-					var m = stackLineRegExp.exec(lines[ii]);
+					var m = /^(.*?)\(?(([\w-]+):\/\/.*?)(\)|$)/.exec(lines[ii]);
 					var url = m ? m[2] : lines[ii];
 					var subUrl = (localStorage['showColumn'] ? /^(.*?):([\d:]+)$/ : /^(.*?):(\d+)(:\d+)?$/).exec(url);
-					var num = lines.length - ii;
-					var url = subUrl ? subUrl[1] : url;
 					var line = subUrl ? subUrl[2] : null;
 					var method = (m && m[1].trim() ? m[1].trim() + '()' : '');
-					errorHtml += '<br/>' + ((lines.length > 1 ? '&nbsp;#' + num + ' ' : '') + (localStorage['linkViewSource']
+					url = subUrl ? subUrl[1] : url;
+					errorHtml += '<br/>&nbsp;' + ((localStorage['linkViewSource']
 								? ('<a href="view-source:' + url + (line ? '#' + line : '') + '" target="_blank">' + url + (line ? ':' + line : '') + '</a>')
 								: (url + (line ? ':' + line : ''))
 						) + ' ' + method);
@@ -143,7 +141,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			}
 			else {
 				var url = error.url + (error.line ? ':' + error.line : '');
-				errorHtml += '<br/>' + (localStorage['linkViewSource']
+				errorHtml += '<br/>&nbsp;' + (localStorage['linkViewSource']
 						? '<a href="view-source:' + error.url + (error.line ? '#' + error.line : '') + '" target="_blank">' + url + '</a>'
 						: url);
 			}
