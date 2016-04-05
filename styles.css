@@ -16,6 +16,10 @@ a {
 	text-decoration: none;
 }
 
+a:hover {
+	text-decoration: underline;
+}
+
 input[type=checkbox]:hover {
 	cursor: pointer;
 }
