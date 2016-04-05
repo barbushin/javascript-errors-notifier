@@ -126,16 +126,24 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			if(localStorage['showTrace'] && error.stack && (lines = error.stack.replace(/\n\s*at\s+/g, '\n').split('\n')).length > 2) {
 				lines.shift();
 				for(var ii in lines) {
-					var m = /^(.*?)\(?(([\w-]+):\/\/.*?)(\)|$)/.exec(lines[ii]);
-					var url = m ? m[2] : lines[ii];
-					var subUrl = (localStorage['showColumn'] ? /^(.*?):([\d:]+)$/ : /^(.*?):(\d+)(:\d+)?$/).exec(url);
-					var line = subUrl ? subUrl[2] : null;
-					var method = (m && m[1].trim() ? m[1].trim() + '()' : '');
-					url = subUrl ? subUrl[1] : url;
-					errorHtml += '<br/>&nbsp;' + ((localStorage['linkViewSource']
-								? ('<a href="view-source:' + url + (line ? '#' + line : '') + '" target="_blank">' + url + (line ? ':' + line : '') + '</a>')
-								: (url + (line ? ':' + line : ''))
-						) + ' ' + method);
+					var urlMatch = /^(.*?)\(?(([\w-]+):\/\/.*?)(\)|$)/.exec(lines[ii]);
+					var url = urlMatch ? urlMatch[2] : null;
+					var method = urlMatch ? urlMatch[1].trim() : lines[ii];
+					var lineMatch = url ? (localStorage['showColumn'] ? /^(.*?):([\d:]+)$/ : /^(.*?):(\d+)(:\d+)?$/).exec(url) : null;
+					var line = lineMatch ? lineMatch[2] : null;
+					url = lineMatch ? lineMatch[1] : url;
+					if(!url && method == 'Error (native)') {
+						continue;
+					}
+					errorHtml += '<br/>&nbsp;';
+					if(url) {
+						errorHtml += localStorage['linkViewSource']
+							? ('<a href="view-source:' + url + (line ? '#' + line : '') + '" target="_blank">' + url + (line ? ':' + line : '') + '</a>')
+							: (url + (line ? ':' + line : ''));
+					}
+					if(method) {
+						errorHtml += ' ' + method;
+					}
 				}
 
 			}
