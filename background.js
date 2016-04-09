@@ -142,7 +142,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 							: (url + (line ? ':' + line : ''));
 					}
 					if(method) {
-						errorHtml += ' ' + method;
+						errorHtml += ' ' + method + '()';
 					}
 				}
 
