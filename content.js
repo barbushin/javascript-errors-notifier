@@ -117,9 +117,13 @@ new function() {
 
 		// handle console.error()
 		var consoleErrorFunc = window.console.error;
-		window.console.error = function(text) {
-			consoleErrorFunc.call(console, text);
-			handleUserError(text);
+		window.console.error = function() {
+			var argsArray = [];
+			for(var i in arguments) { // because arguments.join() not working! oO
+				argsArray.push(arguments[i]);
+			}
+			consoleErrorFunc.apply(console, argsArray);
+			handleUserError(argsArray.join(' '));
 		};
 
 		// handle uncaught errors
