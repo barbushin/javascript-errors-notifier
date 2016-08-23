@@ -1,6 +1,11 @@
 JavaScript Errors Notifier
 ==========================
 
+[![Author](http://img.shields.io/badge/author-@barbushin-blue.svg?style=flat-square)](https://www.linkedin.com/in/barbushin)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/jafmfknfnkoekkdocjiaipcnmkklaajd.svg?maxAge=2592000?style=flat-square)](https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/d/jafmfknfnkoekkdocjiaipcnmkklaajd.svg?maxAge=2592000?style=flat-square)](https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd)
+
 ## Installation
 
 Add [JavaScript Errors Notifier](https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd) extension to your Google Chrome, and check the [test page](http://php-console.com/js_errors.html) to see how JavaScript errors will be handled in your browser.
