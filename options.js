@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		'ignore404others',
 		'ignoreExternal',
 		'ignoreBlockedByClient',
+		'ignoreConnectionRefused',
 		'popupMaxWidth',
 		'popupMaxHeight'
 	];

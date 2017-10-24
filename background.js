@@ -52,7 +52,8 @@ function getIgnoredUrlHash(url) {
 }
 
 chrome.webRequest.onErrorOccurred.addListener(function(e) {
-	if(localStorage['ignoreBlockedByClient'] && e.error == 'net::ERR_BLOCKED_BY_CLIENT') {
+	if((localStorage['ignoreBlockedByClient'] && e.error == 'net::ERR_BLOCKED_BY_CLIENT') ||
+		(localStorage['ignoreConnectionRefused'] && e.error == 'net::ERR_CONNECTION_REFUSED')) {
 		var url = getIgnoredUrlHash(e.url);
 		if(!isUrlIgnoredByType(url)) {
 			if(ignoredUrlsHashes[url]) { // move url in the end of list
@@ -155,8 +156,8 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			else {
 				var url = error.url + (error.line ? ':' + error.line : '');
 				errorHtml += '<br/>&nbsp;' + (localStorage['linkViewSource']
-						? '<a href="view-source:' + error.url + (error.line ? '#' + error.line : '') + '" target="_blank">' + url + '</a>'
-						: url);
+					? '<a href="view-source:' + error.url + (error.line ? '#' + error.line : '') + '" target="_blank">' + url + '</a>'
+					: url);
 			}
 			popupErrors.push(errorHtml);
 		}
