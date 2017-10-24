@@ -109,7 +109,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			popupErrors.unshift('File not found: ' + htmlentities(error.url));
 		}
 		else {
-			error.text = error.text.replace(/^Uncaught /g, '');
+			error.text = error.text.replace(/^Uncaught /, '').replace(/^Error: /, '');
 
 			var errorHtml = localStorage['linkStackOverflow']
 				? '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>'
