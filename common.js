@@ -32,7 +32,7 @@ function autoSize() {
 		sendMessage({
 			_resize: true,
 			width: document.body.scrollWidth + 10,
-			height: document.body.scrollHeight
+			height: document.body.scrollHeight + 15
 		}, '*');
 	}
 }
