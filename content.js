@@ -98,22 +98,29 @@ new function() {
 
 	function codeToInject() {
 
-		function handleUserError(text) {
-			var e = new Error();
-			var stack = e.stack.split("\n");
-			var callSrc = (stack.length > 3 && (/^.*?\((.*?):(\d+):(\d+)/.exec(stack[3]) || /(\w+:\/\/.*?):(\d+):(\d+)/.exec(stack[3]))) || [null, null, null, null];
-			delete stack[1];
-			delete stack[2];
+		function handleCustomError(message, stack) {
+			if(!stack) {
+				stack = (new Error()).stack.split("\n").splice(2, 4).join("\n");
+			}
+
+			var stackLines = stack.split("\n");
+			var callSrc = (stackLines.length > 1 && (/^.*?\((.*?):(\d+):(\d+)/.exec(stackLines[1]) || /(\w+:\/\/.*?):(\d+):(\d+)/.exec(stackLines[1]))) || [null, null, null, null];
+
 			document.dispatchEvent(new CustomEvent('ErrorToExtension', {
 				detail: {
-					stack: stack.join("\n"),
+					stack: stackLines.join("\n"),
 					url: callSrc[1],
 					line: callSrc[2],
 					col: callSrc[3],
-					text: text
+					text: message
 				}
 			}));
 		}
+
+		// handle uncaught promises errors
+		window.addEventListener('unhandledrejection', function(e) {
+			handleCustomError(e.reason.message, e.reason.stack);
+		});
 
 		// handle console.error()
 		var consoleErrorFunc = window.console.error;
@@ -123,7 +130,8 @@ new function() {
 				argsArray.push(arguments[i]);
 			}
 			consoleErrorFunc.apply(console, argsArray);
-			handleUserError(argsArray.join(' '));
+
+			handleCustomError(argsArray.join(' '));
 		};
 
 		// handle uncaught errors
@@ -174,7 +182,7 @@ new function() {
 					icon = null;
 				}
 			}
-			else if(data._resize) {
+			else if(data._resize && popup) {
 				var maxHeight = Math.round(window.innerHeight * 0.4);
 				var maxWidth = Math.round(window.innerWidth * 0.4);
 				var height = data.height < maxHeight ? data.height : maxHeight;
