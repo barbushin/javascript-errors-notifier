@@ -12,20 +12,34 @@ document.addEventListener('DOMContentLoaded', function() {
 		'ignore404css',
 		'ignore404others',
 		'ignoreExternal',
-		'ignoreBlockedByClient'
+		'ignoreBlockedByClient',
+		'popupMaxWidth',
+		'popupMaxHeight'
 	];
 
 	for(var i in optionsIds) {
 		var option = optionsIds[i];
-		var checkbox = document.getElementById(option);
-		if(localStorage[option]) {
-			checkbox.checked = true;
-		}
-		checkbox.onchange = (function(option) {
-			return function() {
-				localStorage[option] = this.checked ? 1 : '';
+		var value = localStorage[option];
+		var input = document.getElementById(option);
+
+		if(input.type == 'checkbox') {
+			if(value) {
+				input.checked = true;
 			}
-		})(option);
+			input.onchange = (function(option) {
+				return function() {
+					localStorage[option] = this.checked ? 1 : '';
+				}
+			})(option);
+		}
+		else {
+			input.value = value;
+			input.onkeyup = (function(option) {
+				return function() {
+					localStorage[option] = this.value;
+				}
+			})(option);
+		}
 	}
 
 	document.getElementById('close').onclick = function() {

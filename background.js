@@ -16,11 +16,14 @@ function initDefaultOptions() {
 		showIcon: true,
 		ignore404others: true,
 		ignoreBlockedByClient: true,
-		relativeErrorUrl: true
+		relativeErrorUrl: true,
+		popupMaxWidth: 70,
+		popupMaxHeight: 40
 	};
 	for(var option in optionsValues) {
 		if(typeof localStorage[option] == 'undefined') {
-			localStorage[option] = optionsValues[option] ? 1 : '';
+			var value = optionsValues[option];
+			localStorage[option] = typeof(value) == 'boolean' ? (value ? 1 : '') : value;
 		}
 	}
 }
@@ -83,7 +86,9 @@ function handleInitRequest(data, sender, sendResponse) {
 	sendResponse({
 		showIcon: typeof localStorage['icon_' + tabHost] != 'undefined' ? localStorage['icon_' + tabHost] : localStorage['showIcon'],
 		showPopup: typeof localStorage['popup_' + tabHost] != 'undefined' ? localStorage['popup_' + tabHost] : localStorage['showPopup'],
-		showPopupOnMouseOver: localStorage['showPopupOnMouseOver']
+		showPopupOnMouseOver: localStorage['showPopupOnMouseOver'],
+		popupMaxWidth: localStorage['popupMaxWidth'],
+		popupMaxHeight: localStorage['popupMaxHeight']
 
 	});
 }

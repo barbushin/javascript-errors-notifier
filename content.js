@@ -183,8 +183,8 @@ new function() {
 				}
 			}
 			else if(data._resize && popup) {
-				var maxHeight = Math.round(window.innerHeight * 0.4);
-				var maxWidth = Math.round(window.innerWidth * 0.4);
+				var maxHeight = Math.round(window.innerHeight * options.popupMaxHeight / 100) - 60;
+				var maxWidth = Math.round(window.innerWidth * options.popupMaxWidth / 100) - 60;
 				var height = data.height < maxHeight ? data.height : maxHeight;
 				var width = data.width < maxWidth ? data.width : maxWidth;
 				popup.height = (width == maxWidth ? height + 10 : height) + 'px'; // scroll fix
