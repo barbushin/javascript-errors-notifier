@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			request = parseUrl(event.data.url);
 			errorsNode.innerHTML = request.errors;
 			setTimeout(autoSize, 100);
+			setTimeout(autoSize, 500); // hot fix for slow CPU
 		}
 	});
 });
