@@ -131,7 +131,7 @@ new function() {
 			}
 			consoleErrorFunc.apply(console, argsArray);
 
-			handleCustomError(argsArray.join(' '));
+			handleCustomError(argsArray.length == 1 && typeof argsArray[0] == 'string' ? argsArray[0] : JSON.stringify(argsArray.length == 1 ? argsArray[0] : argsArray));
 		};
 
 		// handle uncaught errors
