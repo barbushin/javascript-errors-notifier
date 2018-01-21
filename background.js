@@ -213,6 +213,16 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			}
 		}
 
+		popupErrors.forEach(function(err) {
+			chrome.notifications.create(undefined, {
+				type: "basic",
+				title: tabBaseUrl,
+				message: err.text,
+				contextMessage: err.subtext,
+				iconUrl: "img/error_38.png",
+			});
+		});
+
 		var popupUri = 'popup.html?errors=' + encodeURIComponent(errorsHtml) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
 
 		chrome.pageAction.setPopup({
