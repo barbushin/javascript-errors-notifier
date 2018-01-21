@@ -46,6 +46,7 @@
 		"<all_urls>",
 		"tabs",
 		"storage",
-		"webRequest"
+		"webRequest",
+		"notifications"
 	]
 }

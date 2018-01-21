@@ -11,9 +11,18 @@ function getBaseHostByUrl(url) {
 	return localUrlRegexp.exec(url) ? 'localhost' : (rootHostRegexp.exec(url) || subDomainRegexp.exec(url))[1];
 }
 
+function truthy(x) {
+	return x;
+}
+
+function pluckHtml(x) {
+	return x.html;
+}
+
 function initDefaultOptions() {
 	var optionsValues = {
 		showIcon: true,
+		showNotification: false,
 		ignore404others: true,
 		ignoreBlockedByClient: true,
 		relativeErrorUrl: true,
@@ -112,9 +121,15 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			}
 			error.type = 'File not found';
 			error.text = error.url;
-			popupErrors.unshift('File not found: ' + htmlentities(error.url));
+			popupErrors.unshift({
+				html: 'File not found: ' + htmlentities(error.url),
+				text: 'File not found: ' + error.url,
+			});
 		}
 		else {
+			var errorText = error.text;
+			var errorSubtext = [ error.url, error.line, error.col ].filter(truthy).join(':');
+
 			error.text = error.text.replace(/^Uncaught /, '').replace(/^Error: /, '');
 
 			var errorHtml = localStorage['linkStackOverflow']
@@ -159,7 +174,12 @@ function handleErrorsRequest(data, sender, sendResponse) {
 					? '<a href="view-source:' + error.url + (error.line ? '#' + error.line : '') + '" target="_blank">' + url + '</a>'
 					: url);
 			}
-			popupErrors.push(errorHtml);
+
+			popupErrors.push({
+				html: errorHtml,
+				text: errorText,
+				subtext: errorSubtext,
+			});
 		}
 	}
 
@@ -185,13 +205,25 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			}
 		});
 
-		var errorsHtml = popupErrors.join('<br/><br/>');
+		var errorsHtml = popupErrors.map(pluckHtml).join('<br/><br/>');
 
 		if(localStorage['relativeErrorUrl'] && tabBaseUrl) {
 			errorsHtml = errorsHtml.split(tabBaseUrl + '/').join('/').split(tabBaseUrl).join('/');
 			if(localStorage['linkViewSource']) {
 				errorsHtml = errorsHtml.split('href="view-source:/').join('href="view-source:' + tabBaseUrl + '/');
 			}
+		}
+
+		if (localStorage['showNotification']) {
+			popupErrors.forEach(function(err) {
+				chrome.notifications.create(undefined, {
+					type: "basic",
+					title: tabBaseUrl,
+					message: err.text,
+					contextMessage: err.subtext,
+					iconUrl: "img/error_38.png",
+				});
+			});
 		}
 
 		var popupUri = 'popup.html?errors=' + encodeURIComponent(errorsHtml) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
