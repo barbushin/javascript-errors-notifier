@@ -22,6 +22,7 @@ function pluckHtml(x) {
 function initDefaultOptions() {
 	var optionsValues = {
 		showIcon: true,
+		showNotification: false,
 		ignore404others: true,
 		ignoreBlockedByClient: true,
 		relativeErrorUrl: true,
@@ -213,15 +214,17 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			}
 		}
 
-		popupErrors.forEach(function(err) {
-			chrome.notifications.create(undefined, {
-				type: "basic",
-				title: tabBaseUrl,
-				message: err.text,
-				contextMessage: err.subtext,
-				iconUrl: "img/error_38.png",
+		if (localStorage['showNotification']) {
+			popupErrors.forEach(function(err) {
+				chrome.notifications.create(undefined, {
+					type: "basic",
+					title: tabBaseUrl,
+					message: err.text,
+					contextMessage: err.subtext,
+					iconUrl: "img/error_38.png",
+				});
 			});
-		});
+		}
 
 		var popupUri = 'popup.html?errors=' + encodeURIComponent(errorsHtml) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
 

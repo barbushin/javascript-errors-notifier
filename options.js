@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var optionsIds = [
 		'showIcon',
 		'showPopup',
+		'showNotification',
 		'showPopupOnMouseOver',
 		'showColumn',
 		'showTrace',
