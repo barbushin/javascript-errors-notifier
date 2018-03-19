@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	]);
 
 	if(!request.errors) {
-		errorsNode.innerHTML = '<p style="padding: 20px">There is no errors on this page :)</p>';
+		errorsNode.innerHTML = '<p style="padding: 20px">There are no errors on this page :)</p>';
 		copyNode.remove();
 		clearNode.remove();
 	}
