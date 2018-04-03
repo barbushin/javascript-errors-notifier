@@ -119,6 +119,9 @@ new function() {
 
 		// handle uncaught promises errors
 		window.addEventListener('unhandledrejection', function(e) {
+			if (typeof e.reason === 'undefined') {
+				e.reason = e.detail;
+			}
 			handleCustomError(e.reason.message, e.reason.stack);
 		});
 
