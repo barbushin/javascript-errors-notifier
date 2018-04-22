@@ -2,7 +2,7 @@
 	"name": "JavaScript Errors Notifier",
 	"short_name": "js_error",
 	"description": "Notifies JavaScript errors by icon in toolbar bar or notification popup",
-	"version": "3.1.0",
+	"version": "3.1.3",
 	"manifest_version": 2,
 	"background": {
 		"scripts": [
@@ -21,7 +21,10 @@
 			"run_at": "document_start"
 		}
 	],
-	"options_page": "options.html",
+	"options_ui": {
+	  "page": "options.html",
+	  "browser_style": true
+	},
 	"icons": {
 		"128": "img/error_128.png",
 		"16": "img/error_16.png",
