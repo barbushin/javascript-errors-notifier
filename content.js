@@ -207,7 +207,7 @@ new function() {
 	chrome.runtime.onMessage.addListener(handleInternalMessage);
 
 	window.addEventListener('message', function(event) {
-		if(typeof event.data == 'object' && event.data._fromJEN) {
+		if(typeof event.data === 'object' && event.data && typeof event.data._fromJEN !== 'undefined' && event.data._fromJEN) {
 			handleInternalMessage(event.data);
 		}
 	});
