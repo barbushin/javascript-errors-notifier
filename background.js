@@ -112,7 +112,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			}
 			error.type = 'File not found';
 			error.text = error.url;
-			popupErrors.unshift('File not found: ' + htmlentities(error.url));
+			popupErrors.unshift('Failed to load: ' + htmlentities(error.url));
 		}
 		else {
 			error.text = error.text.replace(/^Uncaught /, '').replace(/^Error: /, '');
