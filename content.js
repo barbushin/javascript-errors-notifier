@@ -165,6 +165,25 @@ new function() {
 				}));
 			}
 		}, true);
+
+		// handle 404 errors from xhr
+		XMLHttpRequest.prototype.jse__open = XMLHttpRequest.prototype.open
+		XMLHttpRequest.prototype.jse__onload = function(e) {
+			if (this.status >= 400) {
+				document.dispatchEvent(new CustomEvent('ErrorToExtension', {
+					detail: {
+						is404: true,
+						url: this.jse__url
+					}
+				}));
+			}
+		};
+		XMLHttpRequest.prototype.open = function(m, u, a) {
+			this.jse__url = u
+			this.addEventListener('load', this.jse__onload, { once : true });
+			return this.jse__open(m, u, a);
+		};
+
 	}
 
 	var script = document.createElement('script');
