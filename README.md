@@ -10,7 +10,7 @@ JavaScript Errors Notifier
 
 1. Add extenstion to your browser 
  * Google Chrome - https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd
- * Firefox - https://addons.mozilla.org/en-US/firefox/addon/javascript-errors
+ * Firefox - https://addons.mozilla.org/firefox/addon/javascript-errors
 2. Check [test page](http://consle.com/instance/examples/#handle_javascript_errors) to see how JavaScript errors will be handled in your browser.
 
 ## Features
